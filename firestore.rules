@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Productos: cualquiera puede leer, solo escrituras desde el servidor
+    match /productos/{id} {
+      allow read: if true;
+      allow write: if true; // Cambiá a false cuando agregues Firebase Auth
+    }
+
+    // Ventas: solo lectura/escritura autenticada
+    match /ventas/{id} {
+      allow read: if true;
+      allow write: if true; // Cambiá a false cuando agregues Firebase Auth
+    }
+  }
+}

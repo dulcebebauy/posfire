@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ejemplo de uso - Firebase Backend</title>
+</head>
+<body>
+<script type="module" src="firebase-backend.js"></script>
+<script type="module">
+  import {
+    getProductos,
+    agregarProducto,
+    editarProducto,
+    eliminarProducto,
+    registrarVenta,
+    getReporte,
+    descargarBackup,
+  } from "./firebase-backend.js";
+
+  // ── Listar productos ─────────────────────────────────────
+  const productos = await getProductos();
+  console.log("Productos:", productos);
+
+  // ── Agregar producto ─────────────────────────────────────
+  const nuevo = await agregarProducto({
+    nombre: "Coca Cola",
+    descripcion: "500ml",
+    precio: 1500,
+    categoria: "bebidas",
+  });
+  console.log("Producto creado:", nuevo.id);
+
+  // ── Editar producto ──────────────────────────────────────
+  await editarProducto({ id: nuevo.id, precio: 1800 });
+
+  // ── Registrar venta ──────────────────────────────────────
+  await registrarVenta({
+    items: [{ id: nuevo.id, cantidad: 2 }],
+    metodo: "efectivo",
+  });
+
+  // ── Ver reporte ──────────────────────────────────────────
+  const ventas = await getReporte();
+  console.log("Ventas:", ventas);
+
+  // ── Descargar backup ─────────────────────────────────────
+  await descargarBackup(); // descarga JSON completo
+  // await descargarBackup({ desde: "2026-05-01", hasta: "2026-05-31" }); // con filtro
+
+  // ── Eliminar producto ────────────────────────────────────
+  await eliminarProducto(nuevo.id);
+</script>
+
+</body>
+</html>
