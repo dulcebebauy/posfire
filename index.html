@@ -2242,7 +2242,27 @@ body {
 
 </div><!-- end #posApp -->
 
-<script>
+<!-- =====================================================
+     FIREBASE — SDK via CDN (módulo ES)
+     ===================================================== -->
+<script type="module">
+import { initializeApp }              from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, collection,
+         doc, getDoc, getDocs,
+         addDoc, query, orderBy }     from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+/* ── Configuración Firebase ─────────────────────────── */
+const firebaseConfig = {
+  apiKey:            "AIzaSyBLA7zH6hsCE7m5IUHgF2mN095aP6jCjjQ",
+  authDomain:        "posdb-f5a31.firebaseapp.com",
+  projectId:         "posdb-f5a31",
+  storageBucket:     "posdb-f5a31.firebasestorage.app",
+  messagingSenderId: "104051381554",
+  appId:             "1:104051381554:web:1dabf13f8dfdf62f77332b",
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
 /* ========== CONFIG ========== */
 const API = "/api";
 
@@ -2394,7 +2414,11 @@ async function cargarProductos(force = false) {
   }
 
   try {
-    const data = await fetch(API + "/productos").then(r => r.json());
+    //const data = await fetch(API + "/productos").then(r => r.json());
+    const snap = await getDocs(collection(db, "productos"));
+    const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    //productos = lista.sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+    
     if (Array.isArray(data)) {
       productos = data.sort((a, b) =>
         a.nombre.trim().localeCompare(b.nombre.trim(), "es", { sensitivity: "base" })
